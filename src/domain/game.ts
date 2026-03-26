@@ -17,12 +17,6 @@ export class WordleGame {
     this.dictionary = dictionary;
   }
 
-  /**
-   * Soumet une tentative.
-   * @throws {GameAlreadyOverError} si la partie est terminée
-   * @throws {InvalidLengthError} si le mot ne fait pas 5 lettres
-   * @throws {InvalidWordError} si le mot n'est pas dans le dictionnaire
-   */
   guess(word: string): AttemptResult {
     if (this.getState().status !== "IN_PROGRESS") {
       throw new GameAlreadyOverError();
@@ -56,7 +50,7 @@ export class WordleGame {
         : "IN_PROGRESS";
 
     return {
-      attempts: [...this.attempts],
+      attempts: this.attempts.map((attempt) => attempt.map((r) => ({ ...r }))),
       status,
       maxAttempts: 6,
     };

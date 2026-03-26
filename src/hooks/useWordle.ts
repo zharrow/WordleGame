@@ -5,6 +5,7 @@ import { WordleGame } from "@/domain/game";
 import { StaticDictionary } from "@/infrastructure/StaticDictionary";
 import type { AttemptResult, GameState, LetterFeedback, Word } from "@/domain/types";
 import {
+  InvalidWordError,
   InvalidLengthError,
   GameAlreadyOverError,
 } from "@/domain/errors";
@@ -32,8 +33,6 @@ interface WordleHookActions {
 function buildNewGame() {
   const wordSource = new StaticDictionary();
   const secret = wordSource.pickSecret();
-  // Dictionnaire permissif : le mot secret vient de la liste curatée,
-  // mais toute saisie de 5 lettres est acceptée comme tentative.
   const permissive = { isValid: () => true, pickSecret: () => secret as Word };
   const game = new WordleGame(secret, permissive);
   return { game, secret };
@@ -51,7 +50,6 @@ export function useWordle(): WordleHookState & WordleHookActions {
   const [secretWord, setSecretWord] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
 
-  // Refs pour toujours accéder aux valeurs courantes sans capturer de closure périmée
   const gameRef = useRef(game);
   gameRef.current = game;
 
@@ -66,7 +64,6 @@ export function useWordle(): WordleHookState & WordleHookActions {
     setTimeout(() => setIsShaking(false), 400);
   }, []);
 
-  // Stable — ne dépend d'aucune valeur réactive grâce aux refs
   const submitGuess = useCallback(() => {
     const input = currentInputRef.current;
     setError(null);
@@ -100,15 +97,17 @@ export function useWordle(): WordleHookState & WordleHookActions {
       if (err instanceof InvalidLengthError) {
         setError("Le mot doit faire exactement 5 lettres.");
         triggerShake();
+      } else if (err instanceof InvalidWordError) {
+        setError("Ce mot n'est pas dans le dictionnaire.");
+        triggerShake();
       } else if (err instanceof GameAlreadyOverError) {
         setError("La partie est terminée.");
       } else {
         setError("Erreur inattendue.");
       }
     }
-  }, [triggerShake]); // Stable — ne change jamais
+  }, [triggerShake]);
 
-  // Functional update : pas besoin de capturer currentInput
   const appendLetter = useCallback((key: string) => {
     setError(null);
     setCurrentInput((prev) => (prev + key.toUpperCase()).slice(0, 5));

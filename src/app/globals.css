@@ -29,13 +29,6 @@
   80%       { transform: translateY(-3px); }
 }
 
-@keyframes toast-appear {
-  0%   { opacity: 0; transform: translate(-50%, -10px); }
-  12%  { opacity: 1; transform: translate(-50%, 0); }
-  80%  { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, -6px); }
-}
-
 @keyframes card-appear {
   from { opacity: 0; transform: translateX(14px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -45,7 +38,6 @@
 .tile-shake  { animation: tile-shake  0.4s ease; }
 .tile-pop    { animation: tile-pop    0.1s ease; }
 .tile-bounce { animation: tile-bounce 0.6s ease forwards; }
-.toast-animate { animation: toast-appear 2.4s ease forwards; }
 .card-appear   { animation: card-appear  0.3s ease forwards; }
 
 @custom-variant dark (&:is(.dark *));

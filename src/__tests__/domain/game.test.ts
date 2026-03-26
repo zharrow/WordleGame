@@ -4,16 +4,12 @@ import { InvalidWordError, InvalidLengthError, GameAlreadyOverError } from "@/do
 import type { IDictionary } from "@/domain/IDictionary";
 import type { Word } from "@/domain/types";
 
-// ── Test double : FakeDictionary ──────────────────────────────────────────────
-
 function makeFakeDictionary(validWords: string[], secret: string): IDictionary {
   return {
     isValid: (word: string) => validWords.includes(word.toUpperCase()),
     pickSecret: () => secret.toUpperCase() as Word,
   };
 }
-
-// ── Setup partagé ─────────────────────────────────────────────────────────────
 
 const SECRET_WORD = "PIANO";
 const VALID_WORDS = ["PIANO", "RAMER", "SALON", "TUBER", "ONAIP", "BILLE", "FOLIE"];
@@ -25,8 +21,6 @@ beforeEach(() => {
   dictionary = makeFakeDictionary(VALID_WORDS, SECRET_WORD);
   game = new WordleGame(SECRET_WORD as Word, dictionary);
 });
-
-// ── Cas nominaux ──────────────────────────────────────────────────────────────
 
 describe("WordleGame — cas nominaux", () => {
   it("Given a new game, When the player guesses the secret word, Then the game status becomes WON", () => {
@@ -67,9 +61,13 @@ describe("WordleGame — cas nominaux", () => {
   });
 
   it("Given a game won on the 3rd attempt, When checking state, Then attempts count is 3 and status is WON", () => {
-    game.guess("RAMER");
-    game.guess("SALON");
-    game.guess("PIANO");
+    const firstGuess = "RAMER";
+    const secondGuess = "SALON";
+    const secretWord = "PIANO";
+
+    game.guess(firstGuess);
+    game.guess(secondGuess);
+    game.guess(secretWord);
 
     const state = game.getState();
 
@@ -79,17 +77,20 @@ describe("WordleGame — cas nominaux", () => {
 
   it("Given 5 wrong guesses then the correct word, When evaluated, Then status is WON not LOST", () => {
     const wrongGuess = "RAMER";
+    const secretWord = "PIANO";
 
     for (let i = 0; i < 5; i++) {
       game.guess(wrongGuess);
     }
-    game.guess("PIANO");
+    game.guess(secretWord);
 
     expect(game.getState().status).toBe("WON");
   });
 
   it("Given a guess, When state is read, Then attempts[0] contains 5 letter-feedback pairs", () => {
-    game.guess("RAMER");
+    const playerGuess = "RAMER";
+
+    game.guess(playerGuess);
 
     const { attempts } = game.getState();
 
@@ -105,8 +106,6 @@ describe("WordleGame — cas nominaux", () => {
     expect(state.maxAttempts).toBe(6);
   });
 });
-
-// ── Cas d'erreur ──────────────────────────────────────────────────────────────
 
 describe("WordleGame — erreurs métier", () => {
   it("Given an in-progress game, When the player guesses a word not in the dictionary, Then an InvalidWordError is thrown", () => {
@@ -128,27 +127,34 @@ describe("WordleGame — erreurs métier", () => {
   });
 
   it("Given a game that is WON, When the player tries to guess again, Then a GameAlreadyOverError is thrown", () => {
-    game.guess("PIANO");
+    const secretWord = "PIANO";
+    const extraGuess = "RAMER";
 
-    expect(() => game.guess("RAMER")).toThrow(GameAlreadyOverError);
+    game.guess(secretWord);
+
+    expect(() => game.guess(extraGuess)).toThrow(GameAlreadyOverError);
   });
 
   it("Given a game that is LOST, When the player tries to guess again, Then a GameAlreadyOverError is thrown", () => {
+    const wrongGuess = "RAMER";
+    const secretWord = "PIANO";
+
     for (let i = 0; i < 6; i++) {
-      game.guess("RAMER");
+      game.guess(wrongGuess);
     }
 
-    expect(() => game.guess("PIANO")).toThrow(GameAlreadyOverError);
+    expect(() => game.guess(secretWord)).toThrow(GameAlreadyOverError);
   });
 
   it("Given a WON game, When an invalid-length word is submitted, Then GameAlreadyOverError takes priority over InvalidLengthError", () => {
-    game.guess("PIANO");
+    const secretWord = "PIANO";
+    const tooShortWord = "AB";
 
-    expect(() => game.guess("AB")).toThrow(GameAlreadyOverError);
+    game.guess(secretWord);
+
+    expect(() => game.guess(tooShortWord)).toThrow(GameAlreadyOverError);
   });
 });
-
-// ── Normalisation ─────────────────────────────────────────────────────────────
 
 describe("WordleGame — normalisation de la saisie", () => {
   it("Given a lowercase guess, When submitted, Then it is accepted as if uppercase", () => {
@@ -168,8 +174,6 @@ describe("WordleGame — normalisation de la saisie", () => {
   });
 });
 
-// ── Isolation : le jeu ne dépend que du contrat IDictionary ──────────────────
-
 describe("WordleGame — isolation", () => {
   it("Given a dictionary stub that rejects all words, When any guess is submitted, Then InvalidWordError is thrown", () => {
     const emptyDictionary: IDictionary = {
@@ -181,13 +185,27 @@ describe("WordleGame — isolation", () => {
     expect(() => isolatedGame.guess("PIANO")).toThrow(InvalidWordError);
   });
 
-  it("Given a state snapshot, When the caller mutates attempts, Then the game state is unaffected", () => {
-    game.guess("RAMER");
+  it("Given a state snapshot, When the caller mutates the attempts array, Then the game state is unaffected", () => {
+    const playerGuess = "RAMER";
+
+    game.guess(playerGuess);
 
     const state = game.getState();
     state.attempts.pop();
 
     expect(game.getState().attempts).toHaveLength(1);
+  });
+
+  it("Given a state snapshot, When the caller mutates a nested feedback object, Then the game state is unaffected", () => {
+    const playerGuess = "RAMER";
+
+    game.guess(playerGuess);
+
+    const state = game.getState();
+    const originalFeedback = state.attempts[0][0].feedback;
+    state.attempts[0][0].feedback = "ABSENT";
+
+    expect(game.getState().attempts[0][0].feedback).toBe(originalFeedback);
   });
 
   it("Given a dictionary stub that accepts all words, When any 5-letter guess is submitted, Then no dictionary error is thrown", () => {

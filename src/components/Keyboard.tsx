@@ -17,9 +17,9 @@ const ROWS = [
 ];
 
 const feedbackStyles: Record<LetterFeedback, string> = {
-  CORRECT: "bg-green-600 text-white border-green-600",
-  MISPLACED: "bg-yellow-500 text-white border-yellow-500",
-  ABSENT: "bg-zinc-600 text-zinc-400 border-zinc-600",
+  CORRECT:   "bg-green-600  border-green-600  text-white",
+  MISPLACED: "bg-yellow-500 border-yellow-500 text-white",
+  ABSENT:    "bg-zinc-500   border-zinc-500   text-zinc-300",
 };
 
 export function Keyboard({
@@ -39,20 +39,33 @@ export function Keyboard({
   return (
     <div className="flex flex-col items-center gap-1.5">
       {ROWS.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex gap-1.5">
+        <div key={rowIndex} className="flex gap-1">
           {row.map((key) => {
             const feedback = key.length === 1 ? letterStates[key] : undefined;
+            const isAction = key === "ENTER" || key === "←";
+
             return (
               <button
                 key={key}
                 onClick={() => handleKey(key)}
                 disabled={disabled}
                 className={cn(
-                  "flex h-14 min-w-[2.5rem] items-center justify-center rounded border px-2 text-sm font-bold uppercase transition-colors",
-                  key.length > 1 ? "min-w-[3.5rem] text-xs" : "",
-                  feedback
-                    ? feedbackStyles[feedback]
-                    : "border-zinc-600 bg-zinc-700 text-zinc-100 hover:bg-zinc-600",
+                  "flex h-12 items-center justify-center rounded border font-bold uppercase transition-colors sm:h-14",
+                  // Largeur : touches action plus larges
+                  isAction
+                    ? "min-w-[3rem] px-2 text-xs sm:min-w-[3.5rem] sm:text-sm"
+                    : "min-w-[2.2rem] text-sm sm:min-w-[2.5rem] sm:text-base",
+                  // Touche ENTER mise en avant
+                  key === "ENTER" && !feedback
+                    ? "border-zinc-400 bg-zinc-500 text-white dark:border-zinc-500 dark:bg-zinc-500 hover:bg-zinc-400 dark:hover:bg-zinc-400"
+                    : // Touche retour
+                      key === "←" && !feedback
+                      ? "border-zinc-300 bg-zinc-200 text-zinc-700 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600"
+                      : // Lettre avec feedback
+                        feedback
+                        ? feedbackStyles[feedback]
+                        : // Lettre neutre
+                          "border-zinc-300 bg-zinc-200 text-zinc-900 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100 hover:bg-zinc-300 dark:hover:bg-zinc-600",
                   disabled && "cursor-not-allowed opacity-50",
                 )}
               >

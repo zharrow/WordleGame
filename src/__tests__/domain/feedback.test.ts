@@ -107,6 +107,12 @@ describe("evaluateGuess", () => {
     expect(result[4]).toEqual({ letter: "S", feedback: "ABSENT" });
   });
 
+  it("Given any valid guess and secret, When evaluated, Then the result always has exactly 5 elements", () => {
+    const result = evaluateGuess(w("PIANO"), w("SALON"));
+
+    expect(result).toHaveLength(5);
+  });
+
   it("Given a guess with a letter appearing 3 times and the secret has 2, When evaluated, Then exactly 2 are marked non-ABSENT and 1 is ABSENT", () => {
     // Secret: ABACA (3×A), Guess: AAABC
     // A(0)=CORRECT, A(1)=CORRECT, A(2)=CORRECT (3 A dans secret)
@@ -121,5 +127,15 @@ describe("evaluateGuess", () => {
     const rFeedbacks = result.slice(0, 4).map((r) => r.feedback);
     const nonAbsentCount = rFeedbacks.filter((f) => f !== "ABSENT").length;
     expect(nonAbsentCount).toBe(2); // exactement 2 R marqués (comme dans le secret)
+  });
+
+  it("Given a secret with 2 identical letters and a guess with only 1, When evaluated, Then the single occurrence is not ABSENT", () => {
+    // BELLE a 2×L, BALTE a 1×L en position 2 (CORRECT car pos 2 dans BELLE = L)
+    const secretWord = w("BELLE");
+    const playerGuess = w("BALTE");
+
+    const result = evaluateGuess(playerGuess, secretWord);
+
+    expect(result[2]).toEqual({ letter: "L", feedback: "CORRECT" });
   });
 });

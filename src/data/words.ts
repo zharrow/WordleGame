@@ -1,81 +1,86 @@
 /**
- * Liste de mots français valides à 5 lettres (majuscules).
- * Source : sélection manuelle pour le projet.
+ * Liste de mots français valides à 5 lettres (majuscules, ASCII uniquement — sans accents).
+ * Le jeu utilise uniquement les 26 lettres A-Z.
  */
-export const WORDS: string[] = [
-  "ADIEU", "ALBUM", "ALLEE", "AMOUR", "ARBRE", "ARCHE",
-  "BALLE", "BARRE", "BILLE", "BLEUS", "BOCAL", "BOIRE",
-  "BOMBE", "BONDE", "BOULE", "BRAVE", "BRUIT", "BULLE",
-  "CABLE", "CADRE", "CALME", "CARRE", "CARTE", "CAUSE",
-  "CHAIR", "CHANT", "CHAUD", "CHIEN", "CHOSE", "CLEFS",
-  "CLORE", "COEUR", "CONTE", "CORPS", "COUPE", "CREME",
-  "CRIME", "CROIX", "CRUEL", "CYCLE", "DANCE", "DALLE",
-  "DEBUT", "DENSE", "DEPOT", "DESIR", "DEUIL", "DEVIS",
-  "DROIT", "DUNES", "DUREE", "EBENE", "ECLAT", "ECRAN",
-  "ECRITS", "EFFET", "ELEVE", "EMAIL", "EMOIS", "ENVOI",
-  "EPAIS", "EPINE", "EPOUX", "EQUIP", "ERRER", "ESPACE",
-  "ETANG", "ETAPE", "ETUDE", "EVEIL", "EVITE", "EXACT",
-  "FABLE", "FAIRE", "FALOT", "FARCE", "FATWA", "FAUTE",
-  "FEMME", "FERME", "FETES", "FEUIL", "FICHE", "FLAIR",
-  "FLEUR", "FLORE", "FLOTS", "FLUET", "FOLIE", "FORET",
-  "FORGE", "FOSSE", "FOYER", "FRANC", "FUITE", "FUMEE",
-  "GALET", "GAMIN", "GARDE", "GENET", "GENRE", "GLACE",
-  "GLISE", "GLOBE", "GLOIR", "GOUTE", "GRACE", "GRAIN",
-  "GRAND", "GRAVE", "GREVE", "GRIOT", "GRISE", "GROIN",
-  "GRUME", "GUERE", "GUIDE", "GUIPR", "HABIT", "HALTE",
-  "HEROS", "HEURE", "HIVER", "HOMME", "HUILE", "HURLE",
-  "HYMEN", "IDEES", "IMAGE", "IMPUR", "INDEX", "INITE",
-  "INLET", "INTER", "ISSUE", "IVOIRE", "JARDIN", "JOUER",
-  "JOUTE", "JURER", "JURON", "LABEL", "LACER", "LAINE",
-  "LAMPE", "LANCE", "LARGE", "LARME", "LASER", "LAYER",
-  "LECON", "LEGER", "LENTS", "LEVRE", "LIEGE", "LIGNE",
-  "LIMER", "LINGE", "LITRE", "LIVRE", "LOBER", "LOCHE",
-  "LODGE", "LONGE", "LOUER", "LOUPE", "LUEUR", "LUTTE",
-  "LUXES", "LYNCH", "LYSER", "MAIRE", "MALLE", "MALUS",
-  "MARIN", "MASSE", "MATIN", "MECHE", "MELEE", "MENER",
-  "MENUS", "MERCI", "MERIS", "MESUR", "METAL", "METEO",
-  "METRE", "MEUTE", "MICRO", "MINCE", "MIROIR", "MODES",
-  "MONDE", "MONTE", "MORAL", "MORSE", "MOTIF", "MOULE",
-  "MULET", "MONDE", "NAGER", "NAPPE", "NATTE", "NERVE",
-  "NIGER", "NOEUD", "NOIER", "NOIRE", "NORME", "NOTRE",
-  "NOVAU", "NOYAU", "NUDGE", "NUIRE", "NUAGE", "NURSE",
-  "OBJET", "OCEAN", "OFFRE", "OLIVE", "OPALE", "OPERE",
-  "ORAGE", "ORBITE", "ORDRE", "ORGUE", "OVALE", "OZONE",
-  "PAGES", "PALET", "PANSE", "PAPES", "PARCE", "PAROI",
-  "PARTI", "PASSE", "PATIO", "PATRE", "PAUSE", "PEINE",
-  "PELER", "PENTE", "PERLE", "PHASE", "PIANO", "PIECE",
-  "PIEGE", "PINCE", "PITON", "PIXEL", "PLACE", "PLAGE",
-  "PLAIN", "PLAIT", "PLIER", "PLOMB", "PLUME", "POELE",
-  "POEME", "POETE", "POIDS", "POILS", "POINT", "POIRE",
-  "POLAR", "PONCE", "PONTE", "PORCE", "PORTE", "POSER",
-  "POTEE", "POULE", "POURR", "PREMI", "PRISE", "PROBE",
-  "PROSE", "PRUNE", "PUBLI", "PUITS", "PUNIT", "PUREE",
-  "QUEUE", "RADER", "RADIO", "RADON", "RAMER", "RANGS",
-  "RAPIDE", "RASEE", "RASER", "RATIO", "RATON", "RAVIN",
-  "REBUS", "RECIT", "REGLE", "REINS", "RESTE", "REVER",
-  "REVUE", "RIEUR", "RIGOT", "ROBOT", "ROCHE", "ROMAN",
-  "RONCE", "ROSEE", "ROTOR", "ROUGE", "ROULE", "ROUTE",
-  "RUBAN", "RUCHE", "RUINE", "RUSEE", "SABOT", "SABLE",
-  "SAINT", "SALIN", "SALON", "SALUT", "SANTE", "SAUCE",
-  "SCOUT", "SECHE", "SEIDE", "SEJOU", "SELLE", "SEMIS",
-  "SENTE", "SERIE", "SERVE", "SIEGE", "SILEX", "SILVA",
-  "SOBRE", "SOCLE", "SOEUR", "SOLDE", "SOLEI", "SOLRE",
-  "SONAR", "SONDE", "SONGE", "SORTE", "SOUCI", "SOUDE",
-  "SOUFI", "SOUPE", "SOURD", "SPORT", "SQUAD", "STADE",
-  "STORE", "STRIE", "STYLE", "SUCRE", "SUITE", "SUPER",
-  "SURGE", "SUSHI", "SUJET", "SYNOD", "TABLE", "TACHE",
-  "TALON", "TAPIS", "TARDE", "TARIF", "TARTE", "TAXER",
-  "TEINT", "TEMPS", "TENTE", "TERME", "TEXTE", "TIGRE",
-  "TITRE", "TOMBE", "TONNE", "TOTEM", "TOUET", "TRACE",
-  "TRAIN", "TRAIT", "TRAME", "TRIER", "TRIPE", "TRITE",
-  "TROIS", "TROLE", "TRONE", "TROUS", "TRUER", "TUBER",
-  "TUNER", "TYRAN", "UNION", "UNITE", "USINE", "VAGUE",
-  "VALSE", "VAPEUR", "VEINE", "VENIR", "VENTE", "VERBE",
-  "VERDE", "VERRE", "VERSE", "VERTU", "VESTE", "VIDEO",
-  "VIGNE", "VILLE", "VISER", "VITRE", "VIVRE", "VOILE",
-  "VOLET", "VOTER", "VOUER", "WAGON", "XENON", "YACHT",
-  "YEUSE", "YOLEI", "ZEBRA", "ZESTE", "ZONES",
-];
-
-// Filtre défensif : ne garder que les mots de exactement 5 lettres
-export const VALID_WORDS: string[] = WORDS.filter((w) => w.length === 5);
+export const VALID_WORDS: string[] = [
+  // A
+  "ABIME", "ABORD", "ABRIS", "ACIER", "ADIEU", "ADORE", "AGILE",
+  "AGITE", "AIGLE", "ALBUM", "ALLEE", "AMOUR", "ANCRE", "ANGLE",
+  "APPEL", "ARBRE", "ARCHE", "ARENE", "ARMER", "ARRET", "ASTRE",
+  "ATOUT", "AUTRE", "AVARE", "AVION",
+  // B
+  "BAGUE", "BALLE", "BARRE", "BAUME", "BICHE", "BILAN", "BILLE",
+  "BLANC", "BOCAL", "BOIRE", "BOITE", "BOMBE", "BONDE", "BONNE",
+  "BORDE", "BOTTE", "BOUGE", "BOULE", "BOURG", "BRAVE", "BRISE",
+  "BRUME", "BRUIT", "BULLE",
+  // C
+  "CABLE", "CADRE", "CALME", "CANNE", "CARRE", "CARTE", "CAUSE",
+  "CHAMP", "CHANT", "CHAOS", "CHAUD", "CHIEN", "CHOSE", "CIBLE",
+  "CLORE", "CLONE", "COEUR", "CONTE", "COPIE", "CORPS", "COUPE",
+  "COURT", "CRANE", "CRETE", "CRIME", "CROIX", "CRUEL", "CUIRE",
+  "CYCLE",
+  // D
+  "DALLE", "DEBUT", "DELTA", "DENSE", "DEPOT", "DESIR", "DEUIL",
+  "DIGNE", "DOIGT", "DROIT", "DUNES", "DUREE", "DUVET",
+  // E
+  "EBENE", "ECLAT", "ECRAN", "EFFET", "EGOUT", "EMAIL", "EMOIS",
+  "ENVOL", "EPAIS", "EPINE", "EPOUX", "ETANG", "ETAPE", "ETUDE",
+  "EVEIL", "EXACT", "EXCES",
+  // F
+  "FABLE", "FAIRE", "FALOT", "FARCE", "FAUTE", "FEMME", "FERME",
+  "FICHE", "FLAIR", "FLEUR", "FLORE", "FLOTS", "FLUET", "FOLIE",
+  "FORET", "FORGE", "FOSSE", "FOYER", "FRANC", "FREIN", "FUITE",
+  "FUMEE",
+  // G
+  "GALET", "GAMIN", "GARDE", "GENRE", "GLACE", "GLOBE", "GRACE",
+  "GRAIN", "GRAND", "GRAVE", "GREVE", "GUIDE",
+  // H
+  "HABIT", "HALTE", "HEROS", "HEURE", "HIVER", "HOMME", "HUILE",
+  // I
+  "IMAGE", "INDEX", "ISSUE",
+  // J
+  "JOUER", "JOUTE", "JURER",
+  // L
+  "LACER", "LAINE", "LAMPE", "LANCE", "LARGE", "LARME", "LASER",
+  "LEGER", "LENTE", "LIEGE", "LIGNE", "LINGE", "LITRE", "LIVRE",
+  "LONGE", "LOUER", "LUEUR", "LUTTE",
+  // M
+  "MAIRE", "MALLE", "MARIN", "MASSE", "MATIN", "MECHE", "MELEE",
+  "METAL", "METRE", "MEUTE", "MICRO", "MINCE", "MONDE", "MONTE",
+  "MORAL", "MOTIF", "MOULE", "MULET",
+  // N
+  "NAGER", "NAPPE", "NATTE", "NOEUD", "NOIRE", "NORME", "NOTRE",
+  "NOYAU", "NUAGE", "NUIRE",
+  // O
+  "OBJET", "OCEAN", "OFFRE", "OLIVE", "OPALE", "ORAGE", "ORDRE",
+  "ORGUE", "OVALE", "OZONE",
+  // P
+  "PALET", "PANSE", "PARCE", "PAROI", "PARTI", "PASSE", "PATIO",
+  "PAUSE", "PEINE", "PENTE", "PERLE", "PHASE", "PIANO", "PIECE",
+  "PIEGE", "PINCE", "PIXEL", "PLACE", "PLAGE", "PLIER", "PLOMB",
+  "PLUME", "POEME", "POETE", "POIDS", "POINT", "POIRE", "POLAR",
+  "PORTE", "POULE", "PRISE", "PROSE", "PRUNE", "PUITS", "PUREE",
+  // R
+  "RADIO", "RAMER", "RASER", "REBUS", "RECIT", "REGLE", "RESTE",
+  "REVER", "REVUE", "ROBOT", "ROCHE", "ROMAN", "RONCE", "ROSEE",
+  "ROUGE", "ROUTE", "RUBAN", "RUCHE", "RUINE",
+  // S
+  "SABOT", "SABLE", "SAINT", "SALIN", "SALON", "SALUT", "SANTE",
+  "SAUCE", "SCOUT", "SECHE", "SELLE", "SERIE", "SIEGE", "SOBRE",
+  "SOCLE", "SOEUR", "SOLDE", "SONAR", "SONDE", "SONGE", "SORTE",
+  "SOUDE", "SOUPE", "SPORT", "STADE", "STORE", "STYLE", "SUCRE",
+  "SUITE", "SUPER",
+  // T
+  "TABLE", "TACHE", "TALON", "TAPIS", "TARIF", "TARTE", "TEINT",
+  "TEMPS", "TENTE", "TERME", "TEXTE", "TIGRE", "TITRE", "TOMBE",
+  "TONNE", "TOTEM", "TRACE", "TRAIN", "TRAIT", "TRAME", "TRIER",
+  "TROIS", "TRONE", "TROUS", "TUNER", "TYRAN",
+  // U
+  "UNION", "UNITE", "USINE",
+  // V
+  "VAGUE", "VALSE", "VEINE", "VENIR", "VENTE", "VERBE", "VERRE",
+  "VERSE", "VERTU", "VESTE", "VIDEO", "VIGNE", "VILLE", "VITRE",
+  "VIVRE", "VOILE", "VOLET", "VOTER",
+  // X Y Z
+  "XENON", "YACHT", "ZEBRE", "ZESTE",
+].filter((w, i, arr) => /^[A-Z]{5}$/.test(w) && arr.indexOf(w) === i);

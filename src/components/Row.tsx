@@ -1,23 +1,43 @@
+import { cn } from "@/lib/utils";
 import { LetterTile } from "./LetterTile";
 import type { AttemptResult } from "@/domain/types";
 
 interface RowProps {
-  /** Résultat d'une tentative soumise */
   result?: AttemptResult;
-  /** Saisie en cours (ligne active non soumise) */
   currentInput?: string;
+  isShaking?: boolean;
+  isWinningRow?: boolean;
+  /** Ligne de révélation : affiche les lettres du mot secret sans feedback */
+  secretLetters?: string;
 }
 
-export function Row({ result, currentInput }: RowProps) {
+export function Row({
+  result,
+  currentInput,
+  isShaking,
+  isWinningRow,
+  secretLetters,
+}: RowProps) {
   return (
-    <div className="flex gap-1.5">
+    <div className={cn("flex gap-1.5", isShaking && "tile-shake")}>
       {Array.from({ length: 5 }, (_, i) => {
+        if (secretLetters !== undefined) {
+          return (
+            <LetterTile
+              key={i}
+              letter={secretLetters[i]}
+              isSecret
+            />
+          );
+        }
         if (result) {
           return (
             <LetterTile
               key={i}
               letter={result[i].letter}
               feedback={result[i].feedback}
+              flipDelay={i * 100}
+              isWinning={isWinningRow}
             />
           );
         }

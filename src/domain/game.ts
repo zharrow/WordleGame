@@ -56,7 +56,7 @@ export class WordleGame {
         : "IN_PROGRESS";
 
     return {
-      attempts: this.attempts,
+      attempts: [...this.attempts],
       status,
       maxAttempts: 6,
     };

@@ -3,9 +3,8 @@
 import { useState, useCallback, useRef } from "react";
 import { WordleGame } from "@/domain/game";
 import { StaticDictionary } from "@/infrastructure/StaticDictionary";
-import type { AttemptResult, GameState, LetterFeedback } from "@/domain/types";
+import type { AttemptResult, GameState, LetterFeedback, Word } from "@/domain/types";
 import {
-  InvalidWordError,
   InvalidLengthError,
   GameAlreadyOverError,
 } from "@/domain/errors";
@@ -18,19 +17,25 @@ interface WordleHookState {
   currentInput: string;
   letterStates: LetterStates;
   error: string | null;
-  secretWord: string | null; // révélé uniquement à la fin
+  secretWord: string | null;
+  isShaking: boolean;
 }
 
 interface WordleHookActions {
   submitGuess: () => void;
-  setInput: (value: string) => void;
+  appendLetter: (key: string) => void;
+  deleteLetter: () => void;
   newGame: () => void;
+  clearError: () => void;
 }
 
 function buildNewGame() {
-  const dictionary = new StaticDictionary();
-  const secret = dictionary.pickSecret();
-  const game = new WordleGame(secret, dictionary);
+  const wordSource = new StaticDictionary();
+  const secret = wordSource.pickSecret();
+  // Dictionnaire permissif : le mot secret vient de la liste curatée,
+  // mais toute saisie de 5 lettres est acceptée comme tentative.
+  const permissive = { isValid: () => true, pickSecret: () => secret as Word };
+  const game = new WordleGame(secret, permissive);
   return { game, secret };
 }
 
@@ -44,22 +49,35 @@ export function useWordle(): WordleHookState & WordleHookActions {
   const [letterStates, setLetterStates] = useState<LetterStates>({});
   const [error, setError] = useState<string | null>(null);
   const [secretWord, setSecretWord] = useState<string | null>(null);
+  const [isShaking, setIsShaking] = useState(false);
 
-  // Garde une référence stable pour éviter les captures de closure périmées
+  // Refs pour toujours accéder aux valeurs courantes sans capturer de closure périmée
   const gameRef = useRef(game);
   gameRef.current = game;
 
+  const secretRef = useRef(secret);
+  secretRef.current = secret;
+
+  const currentInputRef = useRef(currentInput);
+  currentInputRef.current = currentInput;
+
+  const triggerShake = useCallback(() => {
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 400);
+  }, []);
+
+  // Stable — ne dépend d'aucune valeur réactive grâce aux refs
   const submitGuess = useCallback(() => {
+    const input = currentInputRef.current;
     setError(null);
     try {
-      const result = gameRef.current.guess(currentInput);
+      const result = gameRef.current.guess(input);
       const newState = gameRef.current.getState();
 
       setAttempts([...newState.attempts]);
       setGameStatus(newState.status);
       setCurrentInput("");
 
-      // Mettre à jour l'état des lettres (CORRECT > MISPLACED > ABSENT)
       setLetterStates((prev) => {
         const next = { ...prev };
         const priority: Record<LetterFeedback, number> = {
@@ -76,37 +94,45 @@ export function useWordle(): WordleHookState & WordleHookActions {
       });
 
       if (newState.status !== "IN_PROGRESS") {
-        setSecretWord(secret);
+        setSecretWord(secretRef.current);
       }
     } catch (err) {
       if (err instanceof InvalidLengthError) {
         setError("Le mot doit faire exactement 5 lettres.");
-      } else if (err instanceof InvalidWordError) {
-        setError("Ce mot n'est pas dans le dictionnaire.");
+        triggerShake();
       } else if (err instanceof GameAlreadyOverError) {
         setError("La partie est terminée.");
       } else {
         setError("Erreur inattendue.");
       }
     }
-  }, [currentInput, secret]);
+  }, [triggerShake]); // Stable — ne change jamais
 
-  const setInput = useCallback((value: string) => {
+  // Functional update : pas besoin de capturer currentInput
+  const appendLetter = useCallback((key: string) => {
     setError(null);
-    setCurrentInput(value.toUpperCase().slice(0, 5));
+    setCurrentInput((prev) => (prev + key.toUpperCase()).slice(0, 5));
+  }, []);
+
+  const deleteLetter = useCallback(() => {
+    setCurrentInput((prev) => prev.slice(0, -1));
   }, []);
 
   const newGame = useCallback(() => {
     const next = buildNewGame();
     setGameInstance(next);
     gameRef.current = next.game;
+    secretRef.current = next.secret;
     setAttempts([]);
     setGameStatus("IN_PROGRESS");
     setCurrentInput("");
     setLetterStates({});
     setError(null);
     setSecretWord(null);
+    setIsShaking(false);
   }, []);
+
+  const clearError = useCallback(() => setError(null), []);
 
   return {
     attempts,
@@ -115,8 +141,11 @@ export function useWordle(): WordleHookState & WordleHookActions {
     letterStates,
     error,
     secretWord,
+    isShaking,
     submitGuess,
-    setInput,
+    appendLetter,
+    deleteLetter,
     newGame,
+    clearError,
   };
 }

@@ -77,6 +77,26 @@ describe("WordleGame — cas nominaux", () => {
     expect(state.status).toBe("WON");
   });
 
+  it("Given 5 wrong guesses then the correct word, When evaluated, Then status is WON not LOST", () => {
+    const wrongGuess = "RAMER";
+
+    for (let i = 0; i < 5; i++) {
+      game.guess(wrongGuess);
+    }
+    game.guess("PIANO");
+
+    expect(game.getState().status).toBe("WON");
+  });
+
+  it("Given a guess, When state is read, Then attempts[0] contains 5 letter-feedback pairs", () => {
+    game.guess("RAMER");
+
+    const { attempts } = game.getState();
+
+    expect(attempts[0]).toHaveLength(5);
+    expect(attempts[0][0]).toMatchObject({ letter: "R", feedback: expect.any(String) });
+  });
+
   it("Given a new game, When the state is read, Then status is IN_PROGRESS and attempts is empty", () => {
     const state = game.getState();
 
@@ -120,6 +140,12 @@ describe("WordleGame — erreurs métier", () => {
 
     expect(() => game.guess("PIANO")).toThrow(GameAlreadyOverError);
   });
+
+  it("Given a WON game, When an invalid-length word is submitted, Then GameAlreadyOverError takes priority over InvalidLengthError", () => {
+    game.guess("PIANO");
+
+    expect(() => game.guess("AB")).toThrow(GameAlreadyOverError);
+  });
 });
 
 // ── Normalisation ─────────────────────────────────────────────────────────────
@@ -153,6 +179,15 @@ describe("WordleGame — isolation", () => {
     const isolatedGame = new WordleGame("PIANO" as Word, emptyDictionary);
 
     expect(() => isolatedGame.guess("PIANO")).toThrow(InvalidWordError);
+  });
+
+  it("Given a state snapshot, When the caller mutates attempts, Then the game state is unaffected", () => {
+    game.guess("RAMER");
+
+    const state = game.getState();
+    state.attempts.pop();
+
+    expect(game.getState().attempts).toHaveLength(1);
   });
 
   it("Given a dictionary stub that accepts all words, When any 5-letter guess is submitted, Then no dictionary error is thrown", () => {

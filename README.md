@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wordle FR
 
-## Getting Started
+Implémentation du jeu Wordle en français. Projet d'évaluation sur les tests unitaires — M1 Fullstack.
 
-First, run the development server:
+**Stack :** Next.js 16 · React 19 · TypeScript · Tailwind CSS · Shadcn UI · Vitest
+
+## Installation
+
+```bash
+npm install
+```
+
+## Lancer les tests
+
+```bash
+# Mode watch (développement)
+npm test
+
+# Exécution unique (CI / évaluation)
+npm run test:run
+```
+
+Lancer un seul fichier de test :
+
+```bash
+npx vitest run src/__tests__/domain/feedback.test.ts
+```
+
+## Lancer l'application
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── domain/            # Logique métier pure — aucune dépendance framework
+│   ├── types.ts       # Word, LetterFeedback, AttemptResult, GameState
+│   ├── errors.ts      # InvalidWordError, InvalidLengthError, GameAlreadyOverError
+│   ├── IDictionary.ts # Interface contrat du dictionnaire
+│   ├── feedback.ts    # evaluateGuess() — fonction pure
+│   └── game.ts        # WordleGame — reçoit IDictionary en constructeur
+├── infrastructure/
+│   └── StaticDictionary.ts  # Implémentation avec liste statique
+├── data/
+│   └── words.ts       # Liste de mots français à 5 lettres
+├── hooks/
+│   └── useWordle.ts   # Pont domain ↔ état React
+└── components/        # GameBoard, Row, LetterTile, Keyboard
+```
 
-## Learn More
+## Règles du jeu
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Devinez le mot secret de 5 lettres en 6 tentatives maximum.
+- Feedback par lettre après chaque tentative :
+  - 🟩 **CORRECT** — bonne lettre, bonne position
+  - 🟨 **MISPLACED** — bonne lettre, mauvaise position
+  - ⬛ **ABSENT** — lettre absente du mot secret
+- **Règle lettres multiples :** si une lettre apparaît plus de fois dans la proposition que dans le secret, les occurrences surnuméraires sont marquées ABSENT.
